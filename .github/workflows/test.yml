@@ -62,7 +62,7 @@ jobs:
     steps:
       - name: Sync Codebase
         id: sync
-        uses: ./.github/actions/sync
+        uses: Audioreach/meta-audioreach-test/.github/actions/sync@master
         with:
           event_name: ${{ github.event_name }}
           pr_ref:  ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || '' }}
@@ -71,7 +71,7 @@ jobs:
 
       - name: Process URLs
         id: process_urls
-        uses: ./.github/actions/process_urls
+        uses: Audioreach/meta-audioreach-test/.github/actions/process_urls@master
         env:
           MACHINE: ${{ matrix.build_matrix.machine_name }}
           ARTIFACT_KEY: ${{ matrix.build_matrix.kas_file }}
@@ -91,7 +91,7 @@ jobs:
       
       - name: Submit LAVA test job
         id: lava_submit
-        uses: ./.github/actions/lava-test-plans
+        uses: Audioreach/meta-audioreach-test/.github/actions/lava-test-plans@master
         with:
           image_name: ${{ steps.print_trigger.outputs.image_name}}
           machine_name: ${{ matrix.build_matrix.machine_name }}
@@ -125,7 +125,7 @@ jobs:
 
       - name: Generate Summary
         id: generate-summary
-        uses: ./.github/actions/test-job-summary
+        uses: Audioreach/meta-audioreach-test/.github/actions/test-job-summary@master
         with:
           build_id: ${{ github.run_id }}
           gh_token: ${{ secrets.GITHUB_TOKEN }}
