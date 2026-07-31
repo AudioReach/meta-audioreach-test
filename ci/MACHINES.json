@@ -1,24 +1,4 @@
 {
-  "8275-evk": {
-    "file_name": "meta-audioreach-test/ci/iq-8275-evk.yml",
-    "machine_name": "8275-evk",
-    "image_name": "iq-8275-evk",
-    "testing_enabled": false,
-    "build_commands": {
-      "flat_build": "bitbake qcom-multimedia-proprietary-image",
-      "sdk_build": "bitbake qcom-multimedia-proprietary-image && bitbake qcom-multimedia-proprietary-image -c populate_sdk"
-    }
-  },
-  "9075-evk": {
-    "file_name": "meta-audioreach-test/ci/iq-9075-evk.yml",
-    "machine_name": "9075-evk",
-    "image_name": "iq-9075-evk",
-    "testing_enabled": false,
-    "build_commands": {
-      "flat_build": "bitbake qcom-multimedia-proprietary-image",
-      "sdk_build": "bitbake qcom-multimedia-proprietary-image && bitbake qcom-multimedia-proprietary-image -c populate_sdk"
-    }
-  },
   "rb3gen2-core-kit": {
     "file_name": "meta-audioreach-test/ci/rb3gen2-core-kit.yml",
     "machine_name": "rb3gen2-core-kit",
