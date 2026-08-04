@@ -9,6 +9,10 @@ on:
         required: true
         type: string
         description: Build matrix for the test job
+      build_urls:
+        required: false
+        type: string
+        description: JSON map of image_name to build URL (optional compatibility input)
       
       # === Optional knobs for lava-test-plans ===
       distro_name:
@@ -48,6 +52,9 @@ on:
         required: false
         type: boolean
         default: true
+    secrets:
+      LAVATOKEN:
+        required: true
 
 jobs:
  submit_lava:
