@@ -13,14 +13,12 @@ on:
 
 permissions:
   contents: read
-  actions: read
 
 jobs:
   prepare_matrix:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      actions: read
     outputs:
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
       build_urls: ${{ steps.read_url.outputs.build_urls }}
@@ -150,7 +148,6 @@ jobs:
     needs: prepare_matrix
     permissions:
       contents: read
-      actions: read
       checks: write
       pull-requests: write
     uses: Audioreach/meta-audioreach-test/.github/workflows/test.yml@master
