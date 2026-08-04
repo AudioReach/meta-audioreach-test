@@ -1,20 +1,19 @@
 name: trigger_lava_on_success
 
 on:
-  workflow_run:
-    workflows: ["pre_merge_build", "post_merge_build"]
-    types:
-      - completed
+  workflow_call:
+    inputs:
+      upstream_run_id:
+        description: Run ID of the completed build workflow to fetch artifacts from
+        required: true
+        type: string
 
 permissions:
   contents: read
   actions: read
-  checks: write
-  pull-requests: write
 
 jobs:
   prepare_matrix:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     outputs:
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
@@ -25,14 +24,14 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: test-matrix
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ inputs.upstream_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download legacy presigned URL artifacts (txt)
         uses: actions/download-artifact@v6
         with:
           pattern: presigned_url_*.txt
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ inputs.upstream_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: presigned_urls_txt
           merge-multiple: true
@@ -41,7 +40,7 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           pattern: "*_presigned_urls.json"
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ inputs.upstream_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: presigned_urls_json
           merge-multiple: true
@@ -143,7 +142,7 @@ jobs:
 
   trigger_lava:
     needs: prepare_matrix
-    uses: Audioreach/audioreach-workflows/.github/workflows/test.yml@master
+    uses: Audioreach/meta-audioreach-test/.github/workflows/test.yml@master
     secrets: inherit
     with:
       build_matrix: ${{ needs.prepare_matrix.outputs.test_matrix }}
