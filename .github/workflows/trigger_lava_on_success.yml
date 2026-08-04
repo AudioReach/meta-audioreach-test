@@ -1,12 +1,10 @@
 name: trigger_lava_on_success
 
 on:
-  workflow_call:
-    inputs:
-      upstream_run_id:
-        description: Run ID of the completed build workflow to fetch artifacts from
-        required: true
-        type: string
+  workflow_run:
+    workflows: ["pre_merge_build", "post_merge_build"]
+    types:
+      - completed
 
 permissions:
   contents: read
@@ -14,6 +12,7 @@ permissions:
 
 jobs:
   prepare_matrix:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     outputs:
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
@@ -24,14 +23,14 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: test-matrix
-          run-id: ${{ inputs.upstream_run_id }}
+          run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download legacy presigned URL artifacts (txt)
         uses: actions/download-artifact@v6
         with:
           pattern: presigned_url_*.txt
-          run-id: ${{ inputs.upstream_run_id }}
+          run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: presigned_urls_txt
           merge-multiple: true
@@ -40,7 +39,7 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           pattern: "*_presigned_urls.json"
-          run-id: ${{ inputs.upstream_run_id }}
+          run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: presigned_urls_json
           merge-multiple: true
