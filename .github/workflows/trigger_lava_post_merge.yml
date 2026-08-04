@@ -1,4 +1,4 @@
-name: trigger_lava_on_success
+name: trigger_lava_post_merge
 
 on:
   workflow_call:
@@ -159,3 +159,4 @@ jobs:
     with:
       build_matrix: ${{ needs.prepare_matrix.outputs.test_matrix }}
       build_urls: ${{ needs.prepare_matrix.outputs.build_urls }}
+      testplan: post-merge

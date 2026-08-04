@@ -66,3 +66,12 @@ jobs:
         with:
           name: test-matrix
           path: test_matrix.json
+
+  trigger_lava:
+    needs: [flat_build, filter_test_matrix]
+    if: ${{ needs.flat_build.result == 'success' && needs.filter_test_matrix.result == 'success' }}
+    uses: ./.github/workflows/trigger_lava_pre_merge.yml
+    secrets:
+      LAVATOKEN: ${{ secrets.LAVATOKEN }}
+    with:
+      upstream_run_id: ${{ github.run_id }}

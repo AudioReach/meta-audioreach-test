@@ -65,8 +65,8 @@ jobs:
         uses: Audioreach/meta-audioreach-test/.github/actions/sync@master
         with:
           event_name: ${{ github.event_name }}
-          pr_ref:  ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || '' }}
-          pr_repo: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name || '' }}
+          pr_ref:  ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || '' }}
+          pr_repo: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || '' }}
           base_ref: ${{ github.ref_name }}
 
       - name: Process URLs
