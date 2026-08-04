@@ -74,11 +74,101 @@ jobs:
           name: test-matrix
           path: test_matrix.json
 
-  trigger_lava:
+  prepare_matrix:
     needs: [flat_build, sdk_build, filter_test_matrix]
     if: ${{ needs.flat_build.result == 'success' && needs.sdk_build.result == 'success' && needs.filter_test_matrix.result == 'success' }}
-    uses: ./.github/workflows/trigger_lava_post_merge.yml
-    secrets:
-      LAVATOKEN: ${{ secrets.LAVATOKEN }}
+    runs-on: ubuntu-latest
+    outputs:
+      test_matrix: ${{ steps.matrix.outputs.test_matrix }}
+      build_urls: ${{ steps.read_url.outputs.build_urls }}
+    steps:
+      - name: Download legacy presigned URL artifacts (txt)
+        uses: actions/download-artifact@v6
+        with:
+          pattern: presigned_url_*.txt
+          path: presigned_urls_txt
+          merge-multiple: true
+
+      - name: Download current presigned URL artifacts (json)
+        uses: actions/download-artifact@v6
+        with:
+          pattern: "*_presigned_urls.json"
+          path: presigned_urls_json
+          merge-multiple: true
+
+      - name: Read matrix JSON
+        id: matrix
+        shell: bash
+        run: |
+          MATRIX='${{ needs.filter_test_matrix.outputs.test_matrix }}'
+          echo "test_matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+
+      - name: Read presigned URLs
+        id: read_url
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs')
+            const path = require('path')
+            const txtDir = 'presigned_urls_txt'
+            const jsonDir = 'presigned_urls_json'
+            const urls = {}
+            const matrixObj = JSON.parse('${{ needs.filter_test_matrix.outputs.test_matrix }}')
+            let images = []
+            if (Array.isArray(matrixObj)) {
+              images = matrixObj.map(x => x && x.image_name).filter(Boolean)
+            } else if (matrixObj && typeof matrixObj === 'object') {
+              images = Object.values(matrixObj).map(x => x && x.image_name).filter(Boolean)
+            }
+
+            if (fs.existsSync(txtDir)) {
+              const txtEntries = fs.readdirSync(txtDir)
+              for (const entry of txtEntries) {
+                const fullPath = path.join(txtDir, entry)
+                if (fs.statSync(fullPath).isFile()) {
+                  const content = fs.readFileSync(fullPath, 'utf8').trim()
+                  if (content) urls[entry] = content
+                }
+              }
+            }
+
+            if (fs.existsSync(jsonDir)) {
+              const jsonEntries = fs.readdirSync(jsonDir).filter(name => name.endsWith('.json'))
+              for (const entry of jsonEntries) {
+                const fullPath = path.join(jsonDir, entry)
+                if (!fs.statSync(fullPath).isFile()) continue
+                const data = JSON.parse(fs.readFileSync(fullPath, 'utf8'))
+                if (!data || typeof data !== 'object') continue
+                const fileEntries = Object.entries(data)
+                for (const image of images) {
+                  const key = `presigned_url_${image}.txt`
+                  if (urls[key]) continue
+                  const preferred = fileEntries.find(([name]) =>
+                    name.includes(image) &&
+                    (name.endsWith('.tar.gz') || name.endsWith('.tar.bz2')) &&
+                    !name.includes('vision')
+                  )
+                  const fallback = fileEntries.find(([name]) => name.includes(image))
+                  const matched = preferred || fallback
+                  if (matched && matched[1]) urls[key] = matched[1]
+                }
+              }
+            }
+
+            if (Object.keys(urls).length === 0) {
+              throw new Error('No usable presigned URL artifacts were found.')
+            }
+            core.setOutput('build_urls', JSON.stringify(urls))
+
+  trigger_lava:
+    needs: prepare_matrix
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    uses: Audioreach/meta-audioreach-test/.github/workflows/test.yml@master
+    secrets: inherit
     with:
-      upstream_run_id: ${{ github.run_id }}
+      build_matrix: ${{ needs.prepare_matrix.outputs.test_matrix }}
+      build_urls: ${{ needs.prepare_matrix.outputs.build_urls }}
+      testplan: post-merge
