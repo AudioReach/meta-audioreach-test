@@ -97,11 +97,16 @@ jobs:
             core.setOutput('build_url', matched)
 
       - name: Print trigger info
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BUILD_URL: ${{ steps.get_build_url.outputs.build_url }}
+          IMAGE_NAME: ${{ matrix.build_matrix.image_name }}
+          MACHINE_NAME: ${{ matrix.build_matrix.machine_name }}
         run: |
-          echo "Triggered by ${{ github.event_name }}"
-          echo "Build URL: ${{ steps.get_build_url.outputs.build_url }}"
-          echo "Image: ${{ matrix.build_matrix.image_name }}"
-          echo "Machine: ${{ matrix.build_matrix.machine_name }}"
+          echo "Triggered by \"$EVENT_NAME\""
+          echo "Build URL: \"$BUILD_URL\""
+          echo "Image: \"$IMAGE_NAME\""
+          echo "Machine: \"$MACHINE_NAME\""
       
       - name: Submit LAVA test job
         id: lava_submit
