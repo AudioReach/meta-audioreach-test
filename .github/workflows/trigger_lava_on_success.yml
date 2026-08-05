@@ -141,6 +141,10 @@ jobs:
 
   trigger_lava:
     needs: prepare_matrix
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
     uses: Audioreach/meta-audioreach-test/.github/workflows/test.yml@master
     secrets:
       LAVATOKEN: ${{ secrets.LAVATOKEN }}
