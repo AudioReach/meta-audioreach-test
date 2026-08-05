@@ -147,3 +147,4 @@ jobs:
     with:
       build_matrix: ${{ needs.prepare_matrix.outputs.test_matrix }}
       build_urls: ${{ needs.prepare_matrix.outputs.build_urls }}
+      testplan: ${{ github.event.workflow_run.name == 'post_merge_build' && 'post-merge' || 'pre-merge' }}
