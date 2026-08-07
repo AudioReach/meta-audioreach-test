@@ -20,14 +20,14 @@ jobs:
 
     steps:
       - name: Download test matrix artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           name: test-matrix
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download legacy presigned URL artifacts (txt)
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           pattern: presigned_url_*.txt
           run-id: ${{ github.event.workflow_run.id }}
@@ -36,7 +36,7 @@ jobs:
           merge-multiple: true
 
       - name: Download current presigned URL artifacts (json)
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           pattern: "*_presigned_urls.json"
           run-id: ${{ github.event.workflow_run.id }}
@@ -54,7 +54,7 @@ jobs:
 
       - name: Read presigned URLs
         id: read_url
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           script: |
             const fs = require('fs')
@@ -132,7 +132,7 @@ jobs:
             core.setOutput('build_urls', JSON.stringify(urls))
 
       - name: Re-upload presigned URL artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: presigned_urls
           path: |

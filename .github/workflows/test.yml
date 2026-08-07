@@ -77,7 +77,7 @@ jobs:
 
       - name: Get build URL
         id: get_build_url
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           BUILD_URLS_JSON: ${{ inputs.build_urls }}
           IMAGE_NAME: ${{ matrix.build_matrix.image_name }}
@@ -138,7 +138,7 @@ jobs:
       summary_id: ${{ steps.generate-summary.outputs.artifact_id }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
         with:
           fetch-depth: 0
 
@@ -152,7 +152,7 @@ jobs:
       
       # Download ALL matching summary artifacts from parallel jobs and put into one folder.
       - name: Download Summaries
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           pattern: test_job_summary*          # match all parallel summaries
           merge-multiple: true                # place all matched artifact contents into a single folder
