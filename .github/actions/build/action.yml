@@ -40,7 +40,7 @@ inputs:
   parallel_make:
     description: "PARALLEL_MAKE value used during builds (example: -j24)"
     required: false
-    default: "-j24"
+    default: "-j 4"
 
 runs:
   using: "composite"
@@ -172,7 +172,7 @@ runs:
         echo "SDK artifacts created in $PUB_DIR"
 
     - name: Upload artifacts
-      uses: Audioreach/meta-audioreach-test/.github/actions/aws-s3-exchanger@master
+      uses: Audioreach/meta-audioreach/.github/actions/aws-s3-exchanger@ci
       with:
         mode: multi-upload
         local_file: ${{ env.filepath }}
