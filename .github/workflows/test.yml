@@ -68,7 +68,7 @@ jobs:
     steps:
       - name: Sync Codebase
         id: sync
-        uses: Audioreach/meta-audioreach-test-test/.github/actions/sync@master
+        uses: Audioreach/meta-audioreach-test/.github/actions/sync@master
         with:
           event_name: ${{ github.event_name }}
           pr_ref:  ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || '' }}
