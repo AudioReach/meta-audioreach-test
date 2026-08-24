@@ -12,7 +12,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
-      - ci
+      - master
     paths-ignore:
       - '.github/**'
 
