@@ -55,5 +55,5 @@ jobs:
           cd ../openembedded-core
           source oe-init-build-env build
           export MACHINE=qemuarm64
-          yocto-check-layer ../../meta-audioreach --no-auto --dependency ../../meta-openembedded/meta-multimedia/ \
+          yocto-check-layer ../../meta-audioreach-test --no-auto --dependency ../../meta-openembedded/meta-multimedia/ \
             ../../meta-openembedded/meta-python/ ../../meta-openembedded/meta-oe --no-auto-dependency
