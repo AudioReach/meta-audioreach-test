@@ -160,7 +160,12 @@ runs:
           echo "AUTO_LOGIN_PASSWORD_PROMPT=Password" >> "${VARS_OUT_PATH}/gh-variables.ini"
           echo "AUTO_LOGIN_PASSWORD=oelinux123"     >> "${VARS_OUT_PATH}/gh-variables.ini"
         fi
-        echo "IMAGE_FILE_NAME=${IMAGE_TYPE}-${IMAGE_NAME}.rootfs.qcomflash.tar.gz" >> "${VARS_OUT_PATH}/gh-variables.ini"
+        # IMAGE_FILE_NAME must match the actual uploaded tarball's basename (KAS_BASENAME-based,
+        # e.g. rb3gen2-core-kit-6.18) so the postprocess step's IMAGE_IN lookup finds the
+        # downloaded file. qdl_image_dir is set separately below because the directory *inside*
+        # the tarball is named after IMAGE_NAME, not KAS_BASENAME.
+        echo "IMAGE_FILE_NAME=${IMAGE_TYPE}-${KAS_BASENAME}.rootfs.qcomflash.tar.gz" >> "${VARS_OUT_PATH}/gh-variables.ini"
+        echo "qdl_image_dir=${IMAGE_TYPE}-${IMAGE_NAME}" >> "${VARS_OUT_PATH}/gh-variables.ini"
 
         # Use the presigned URL as-is
         if [ -z "${BUILD_URL}" ]; then
