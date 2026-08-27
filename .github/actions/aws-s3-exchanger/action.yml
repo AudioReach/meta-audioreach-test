@@ -46,7 +46,7 @@ runs:
                 echo "Uploaded $file to s3://${{ inputs.s3_bucket }}/${{ env.UPLOAD_LOCATION }}"
                 echo "Creating Pre-signed URL for $file..."
                 filename=$(basename "$file")
-                presigned_url="$(aws s3 presign s3://${{ inputs.s3_bucket }}/${{ env.UPLOAD_LOCATION }}$filename --expires-in 36000)"
+                presigned_url="$(aws s3 presign s3://${{ inputs.s3_bucket }}/${{ env.UPLOAD_LOCATION }}$filename --expires-in 48000)"
                 if [ "$first_line" = true ]; then
                   first_line=false
                 else
@@ -68,7 +68,7 @@ runs:
             echo "Uploaded ${{ inputs.local_file }} to s3://${{ inputs.s3_bucket }}/${{ env.UPLOAD_LOCATION }}"
             filename=$(basename "${{ inputs.local_file }}")
             echo "Creating Pre-signed URL for ${{ inputs.local_file }}..."
-            presigned_url="$(aws s3 presign s3://${{ inputs.s3_bucket }}/${{ env.UPLOAD_LOCATION }}${filename} --expires-in 36000)"
+            presigned_url="$(aws s3 presign s3://${{ inputs.s3_bucket }}/${{ env.UPLOAD_LOCATION }}${filename} --expires-in 48000)"
             echo "presigned_url=${presigned_url}" >> "$GITHUB_OUTPUT"
             ;;
           download)
